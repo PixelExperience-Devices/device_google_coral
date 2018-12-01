@@ -470,6 +470,11 @@ PRODUCT_PACKAGES += \
     libOmxVenc \
     libc2dcolorconvert
 
+# RCS
+PRODUCT_PACKAGES += \
+    PresencePolling \
+    RcsService
+
 # Enable Codec 2.0
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.media.codec2=2 \
