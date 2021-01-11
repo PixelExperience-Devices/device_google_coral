@@ -151,6 +151,11 @@ ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
       $(LOCAL_PATH)/init.cat.rc.userdebug:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.cat.rc
 endif
 
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+    vendor/qcom/opensource/commonsys-intf/display \
+    vendor/qcom/opensource/display
+
 # A/B support
 PRODUCT_PACKAGES += \
     otapreopt_script \
