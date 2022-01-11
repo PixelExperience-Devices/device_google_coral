@@ -37,6 +37,19 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a76
 
 TARGET_BOARD_COMMON_PATH := device/google/coral/sm8150
 
+# Kernel
+BOARD_KERNEL_IMAGE_NAME := Image.lz4
+KERNEL_LD := LD=ld.lld
+TARGET_COMPILE_WITH_MSM_KERNEL := true
+TARGET_KERNEL_ADDITIONAL_FLAGS := \
+    DTC=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/dtc/dtc \
+    MKDTIMG=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/libufdt/mkdtimg
+TARGET_KERNEL_ARCH := arm64
+TARGET_KERNEL_CLANG_COMPILE := true
+TARGET_KERNEL_CONFIG := floral_defconfig
+TARGET_KERNEL_SOURCE := kernel/google/msm-4.14
+TARGET_NEEDS_DTBOIMAGE := true
+
 BOARD_KERNEL_CMDLINE += console=ttyMSM0,115200n8 androidboot.console=ttyMSM0 printk.devkmsg=on
 BOARD_KERNEL_CMDLINE += msm_rtb.filter=0x237
 BOARD_KERNEL_CMDLINE += ehci-hcd.park=3
@@ -55,7 +68,6 @@ BOARD_BOOT_HEADER_VERSION := 2
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 
 # DTBO partition definitions
-BOARD_PREBUILT_DTBOIMAGE := device/google/coral-kernel/dtbo.img
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
 
 TARGET_NO_KERNEL := false
@@ -214,37 +226,6 @@ DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE := device/google/coral/device_framework
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
 
-# Kernel modules
-ifeq (,$(filter-out flame_kasan coral_kasan, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/kasan/*.ko)
-else ifeq (,$(filter-out flame_hwasan coral_hwasan, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/khwasan/*.ko)
-else ifeq (,$(filter-out flame_boundsan coral_boundsan, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/boundsan/*.ko)
-else ifeq (,$(filter-out flame_kernel_debug_memory coral_kernel_debug_memory, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/debug_memory/*.ko)
-else ifeq (,$(filter-out flame_kernel_debug_memory_accounting coral_kernel_debug_memory_accounting, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/debug_memory_accounting/*.ko)
-BOARD_KERNEL_CMDLINE += page_owner=on
-else ifeq (,$(filter-out flame_kernel_debug_locking coral_kernel_debug_locking, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/debug_locking/*.ko)
-else ifeq (,$(filter-out flame_kernel_debug_hang coral_kernel_debug_hang, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/debug_hang/*.ko)
-else ifeq (,$(filter-out flame_kernel_debug_api coral_kernel_debug_api, $(TARGET_PRODUCT)))
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/debug_api/*.ko)
-else
-BOARD_VENDOR_KERNEL_MODULES += \
-    $(wildcard device/google/coral-kernel/*.ko)
-endif
-
 BOARD_SUPER_PARTITION_SIZE := 9755951104
 BOARD_SUPER_PARTITION_GROUPS := google_dynamic_partitions
 BOARD_GOOGLE_DYNAMIC_PARTITIONS_PARTITION_LIST := \
@@ -258,23 +239,6 @@ BOARD_GOOGLE_DYNAMIC_PARTITIONS_SIZE := 4873781248
 
 # Set error limit to BOARD_SUPER_PARTITON_SIZE - 100MB
 BOARD_SUPER_PARTITION_ERROR_LIMIT := 9651093504
-
-# DTB
-ifeq (,$(filter-out coral_kasan flame_kasan, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/kasan
-else ifeq (,$(filter-out flame_kernel_debug_memory coral_kernel_debug_memory, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/debug_memory
-else ifeq (,$(filter-out flame_kernel_debug_memory_accounting coral_kernel_debug_memory_accounting, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/debug_memory_accounting
-else ifeq (,$(filter-out flame_kernel_debug_locking coral_kernel_debug_locking, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/debug_locking
-else ifeq (,$(filter-out flame_kernel_debug_hang coral_kernel_debug_hang, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/debug_hang
-else ifeq (,$(filter-out flame_kernel_debug_api coral_kernel_debug_api, $(TARGET_PRODUCT)))
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel/debug_api
-else
-BOARD_PREBUILT_DTBIMAGE_DIR := device/google/coral-kernel
-endif
 
 # Testing related defines
 BOARD_PERFSETUP_SCRIPT := platform_testing/scripts/perf-setup/c2f2-setup.sh
