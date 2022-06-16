@@ -43,9 +43,7 @@ TARGET_BOARD_COMMON_PATH := device/google/coral/sm8150
 # Kernel
 BOARD_KERNEL_IMAGE_NAME := Image.lz4
 TARGET_COMPILE_WITH_MSM_KERNEL := true
-TARGET_KERNEL_ADDITIONAL_FLAGS := \
-    DTC=$(shell pwd)/prebuilts/tools-custom/$(HOST_OS)-x86/dtc/dtc \
-    MKDTIMG=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/libufdt/mkdtimg
+TARGET_KERNEL_ADDITIONAL_FLAGS := DTC=$(shell pwd)/prebuilts/tools-lineage/$(HOST_OS)-x86/dtc/dtc
 KERNEL_SUPPORTS_LLVM_TOOLS := true
 TARGET_KERNEL_CONFIG := floral_defconfig
 TARGET_KERNEL_SOURCE := kernel/google/msm-4.14
